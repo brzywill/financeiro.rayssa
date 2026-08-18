@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Controle Financeiro | Rayssa Studio da Beleza</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="brand">
+          <img src="assets/logo-branca.png" alt="Rayssa Studio da Beleza" />
+        </div>
+        <nav class="nav" aria-label="Menu principal">
+          <button class="nav-item active" data-view="dashboard">Dashboard</button>
+          <button class="nav-item" data-view="lancamentos">Lançamentos</button>
+          <button class="nav-item" data-view="relatorios">Relatórios</button>
+          <button class="nav-item" data-view="categorias">Categorias</button>
+          <button class="nav-item" data-view="configuracoes">Configurações</button>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <button class="icon-button menu-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
+          <div>
+            <p class="eyebrow">Rayssa Studio da Beleza · Controle financeiro</p>
+            <h1 id="viewTitle">Dashboard</h1>
+            <span class="period-label" id="periodLabel">Este mês</span>
+          </div>
+          <div class="top-actions">
+            <button class="button ghost" id="openHtmlSummary">Resumo HTML</button>
+            <button class="button ghost" id="openPdfModal">Gerar PDF</button>
+            <button class="button soft-button" id="openMassModal">Lançamentos em massa</button>
+            <button class="button primary" id="addEntryBtn">Novo lançamento</button>
+          </div>
+        </header>
+
+        <section class="period-panel" aria-label="Filtros de período">
+          <div class="segmented" id="periodButtons">
+            <button class="active" data-period="today">Hoje</button>
+            <button data-period="week">Esta semana</button>
+            <button data-period="month">Este mês</button>
+            <button data-period="year">Este ano</button>
+            <button data-period="custom">Personalizado</button>
+          </div>
+          <div class="custom-period" id="customPeriod">
+            <label>De <input type="date" id="startDate" /></label>
+            <label>Até <input type="date" id="endDate" /></label>
+          </div>
+        </section>
+
+        <section class="view active" id="dashboardView">
+          <div class="kpi-grid">
+            <article class="kpi"><span>Entradas</span><strong id="kpiEntradas">R$ 0,00</strong><small id="trendEntradas">0%</small></article>
+            <article class="kpi"><span>Saídas</span><strong id="kpiSaidas">R$ 0,00</strong><small id="trendSaidas">0%</small></article>
+            <article class="kpi"><span>Saldo</span><strong id="kpiSaldo">R$ 0,00</strong><small id="trendSaldo">0%</small></article>
+            <article class="kpi"><span>Atendimentos</span><strong id="kpiAtendimentos">0</strong><small id="trendAtendimentos">0%</small></article>
+            <article class="kpi"><span>Ticket médio</span><strong id="kpiTicket">R$ 0,00</strong><small>por atendimento</small></article>
+          </div>
+
+          <div class="dashboard-grid">
+            <section class="panel wide chart-panel"><div class="panel-heading"><div><span class="section-kicker">Movimentação</span><h2>Entradas x saídas</h2></div><span class="chart-note">Comparativo por dia</span></div><canvas id="cashFlowChart"></canvas></section>
+            <section class="panel"><h2>Entradas por categoria</h2><canvas id="incomeCategoryChart"></canvas></section>
+            <section class="panel"><h2>Saídas por categoria</h2><canvas id="expenseCategoryChart"></canvas></section>
+            <section class="panel"><h2>Formas de pagamento</h2><canvas id="paymentChart"></canvas></section>
+            <section class="panel wide"><h2>Evolução do saldo</h2><canvas id="balanceChart"></canvas></section>
+          </div>
+
+          <div class="content-grid">
+            <section class="panel summary-panel"><div class="panel-heading"><div><span class="section-kicker">Visão geral</span><h2>Resumo financeiro</h2></div></div><dl class="summary-list" id="summaryList"></dl></section>
+            <section class="panel"><h2>Últimos lançamentos</h2><div class="compact-list" id="recentList"></div></section>
+            <section class="panel"><h2>Ações rápidas</h2><div class="quick-actions">
+              <button class="button primary" data-quick="entrada">Nova entrada</button>
+              <button class="button soft-button" id="quickMass">Lançar vários atendimentos</button>
+              <button class="button ghost" data-quick="saida">Nova saída</button>
+              <button class="button ghost" data-report="monthly">Relatório mensal</button>
+              <button class="button ghost" id="quickExport">Exportar dados</button>
+            </div></section>
+          </div>
+        </section>
+
+        <section class="view" id="lancamentosView">
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Lançamentos</h2>
+              <div class="panel-actions"><button class="button danger" id="deleteAllTransactions">Excluir todos</button><button class="button soft-button" id="massTransactionBtn">Lançamentos em massa</button><button class="button primary" id="newTransactionBtn">Adicionar</button></div>
+            </div>
+            <div class="filters">
+              <input id="searchInput" type="search" placeholder="Buscar cliente, descrição ou serviço" />
+              <input id="filterDate" type="date" />
+              <select id="filterType"><option value="">Tipo</option><option value="entrada">Entrada</option><option value="saida">Saída</option></select>
+              <select id="filterCategory"><option value="">Categoria</option></select>
+              <select id="filterPayment"><option value="">Pagamento</option></select>
+              <select id="sortSelect"><option value="date_desc">Data ↓</option><option value="date_asc">Data ↑</option><option value="value_desc">Valor ↓</option><option value="value_asc">Valor ↑</option></select>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Data</th><th>Tipo</th><th>Cliente/Descrição</th><th>Serviço/Categoria</th><th>Pagamento</th><th>Valor</th><th>Ações</th></tr></thead>
+                <tbody id="transactionsTable"></tbody>
+              </table>
+            </div>
+            <div class="pagination"><button class="button ghost" id="prevPage">Anterior</button><span id="pageInfo">Página 1</span><button class="button ghost" id="nextPage">Próxima</button></div>
+          </div>
+        </section>
+
+        <section class="view" id="relatoriosView">
+          <div class="panel">
+            <h2>Relatórios</h2>
+            <div class="report-grid">
+              <button class="report-card" data-report="weekly"><strong>Relatório semanal</strong><span>Últimos 7 dias ou semana selecionada</span></button>
+              <button class="report-card" data-report="monthly"><strong>Relatório mensal</strong><span>Resumo do mês com comparativo</span></button>
+              <button class="report-card" data-report="yearly"><strong>Relatório anual</strong><span>Evolução mês a mês</span></button>
+              <button class="report-card" data-report="custom"><strong>Período personalizado</strong><span>Escolha datas e gere PDF</span></button>
+            </div>
+            <div class="report-preview" id="reportPreview"></div>
+          </div>
+        </section>
+
+        <section class="view" id="categoriasView">
+          <div class="content-grid two">
+            <section class="panel"><h2>Categorias de serviços</h2><form class="inline-form" data-category-form="income"><input required placeholder="Nova categoria" /><button class="button primary">Adicionar</button></form><div class="tag-list" id="incomeCategories"></div></section>
+            <section class="panel"><h2>Categorias de despesas</h2><form class="inline-form" data-category-form="expense"><input required placeholder="Nova categoria" /><button class="button primary">Adicionar</button></form><div class="tag-list" id="expenseCategories"></div></section>
+            <section class="panel"><h2>Formas de pagamento</h2><form class="inline-form" data-category-form="payment"><input required placeholder="Nova forma" /><button class="button primary">Adicionar</button></form><div class="tag-list" id="paymentMethods"></div></section>
+          </div>
+        </section>
+
+        <section class="view" id="configuracoesView">
+          <div class="content-grid two">
+            <section class="panel"><h2>Backup</h2><p>Baixe ou restaure os registros financeiros em JSON.</p><div class="quick-actions"><button class="button primary" id="exportData">Exportar dados</button><label class="file-button">Importar dados<input type="file" id="importData" accept="application/json" /></label></div></section>
+            <section class="panel"><h2>Dados de demonstração</h2><p id="demoStatus">Carregue exemplos para testar gráficos e relatórios.</p><div class="quick-actions"><button class="button ghost" id="loadDemo">Carregar demonstração</button><button class="button danger" id="clearDemo">Apagar demonstração</button></div></section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal" id="transactionModal" aria-hidden="true">
+      <div class="modal-card">
+        <div class="modal-header"><h2 id="modalTitle">Novo lançamento</h2><button class="icon-button" data-close-modal>×</button></div>
+        <form id="transactionForm" novalidate>
+          <input type="hidden" id="transactionId" />
+          <div class="type-switch"><label><input type="radio" name="tipo" value="entrada" checked /> Entrada</label><label><input type="radio" name="tipo" value="saida" /> Saída</label></div>
+          <div class="form-grid">
+            <label>Data *<input type="date" id="data" required /></label>
+            <label class="entrada-field">Cliente *<input id="cliente" autocomplete="off" required /></label>
+            <label class="entrada-field">Serviço realizado<input id="servico" autocomplete="off" /></label>
+            <label class="saida-field hidden">Descrição<input id="descricao" autocomplete="off" /></label>
+            <label>Categoria<select id="categoria"></select></label>
+            <label class="saida-field hidden">Fornecedor<input id="fornecedor" autocomplete="off" /></label>
+            <label>Forma de pagamento<select id="formaPagamento"></select></label>
+            <label>Valor *<input id="valor" inputmode="decimal" placeholder="R$ 0,00" required /></label>
+            <label class="full">Observações<textarea id="observacoes" rows="3"></textarea></label>
+          </div>
+          <p class="form-error" id="formError"></p>
+          <div class="modal-actions"><button type="button" class="button ghost" data-close-modal>Cancelar</button><button class="button primary" type="submit">Salvar lançamento</button></div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="massModal" aria-hidden="true">
+      <div class="modal-card mass-card">
+        <div class="modal-header"><div><span class="section-kicker">Cadastro rápido</span><h2>Lançamentos em massa</h2></div><button class="icon-button" data-close-modal>×</button></div>
+        <p class="modal-intro">Informe a data uma vez e registre vários atendimentos do mesmo dia. Cada linha vira uma entrada separada.</p>
+        <div class="mass-toolbar"><label>Data dos atendimentos *<input type="date" id="massDate" required /></label><button class="button soft-button" id="addMassRow" type="button">+ Adicionar linha</button></div>
+        <div class="mass-rows" id="massRows"></div>
+        <p class="form-error" id="massError"></p>
+        <div class="modal-actions"><button type="button" class="button ghost" data-close-modal>Cancelar</button><button class="button primary" id="saveMass" type="button">Salvar lançamentos</button></div>
+      </div>
+    </div>
+
+    <div class="modal" id="detailsModal" aria-hidden="true">
+      <div class="modal-card small">
+        <div class="modal-header"><h2>Detalhes</h2><button class="icon-button" data-close-modal>×</button></div>
+        <div id="detailsContent" class="details"></div>
+      </div>
+    </div>
+
+    <div class="modal" id="pdfModal" aria-hidden="true">
+      <div class="modal-card small">
+        <div class="modal-header"><h2>Gerar PDF</h2><button class="icon-button" data-close-modal>×</button></div>
+        <div class="form-grid single">
+          <label>Tipo de relatório<select id="pdfType"><option value="weekly">Semanal</option><option value="monthly">Mensal</option><option value="yearly">Anual</option><option value="custom">Personalizado</option></select></label>
+          <label>Data inicial<input type="date" id="pdfStart" /></label>
+          <label>Data final<input type="date" id="pdfEnd" /></label>
+        </div>
+        <div class="modal-actions"><button class="button ghost" data-close-modal>Cancelar</button><button class="button primary" id="generatePdf">Gerar PDF</button></div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="js/storage.js" defer></script>
+    <script src="js/dashboard.js" defer></script>
+    <script src="js/lancamentos.js" defer></script>
+    <script src="js/relatorios.js" defer></script>
+    <script src="js/pdf.js" defer></script>
+    <script src="js/app.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resumo financeiro | Rayssa Studio da Beleza</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="css/resumo.css" />
+  </head>
+  <body>
+    <header class="report-header">
+      <div class="header-inner">
+        <img src="assets/logo-branca.png" alt="Rayssa Studio da Beleza" />
+        <div class="header-actions">
+          <a class="button secondary" href="index.html">Voltar</a>
+          <a class="button secondary" id="downloadHtml" href="#" aria-disabled="true">Preparando HTML...</a>
+          <button class="button light" id="printSummary">Imprimir</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="report-main">
+      <section class="title-row">
+        <div>
+          <p class="eyebrow">Controle financeiro</p>
+          <h1>Resumo do período</h1>
+          <p class="period" id="summaryPeriod">Carregando período...</p>
+        </div>
+        <div class="generated-at"><span>Atualizado em</span><strong id="generatedAt"></strong></div>
+      </section>
+
+      <section class="metrics" aria-label="Resumo financeiro">
+        <article class="metric income"><span>Entradas</span><strong id="summaryIncome">R$ 0,00</strong></article>
+        <article class="metric expense"><span>Saídas</span><strong id="summaryExpense">R$ 0,00</strong></article>
+        <article class="metric balance"><span>Saldo</span><strong id="summaryBalance">R$ 0,00</strong></article>
+        <article class="metric"><span>Atendimentos</span><strong id="summaryAppointments">0</strong></article>
+        <article class="metric"><span>Ticket médio</span><strong id="summaryTicket">R$ 0,00</strong></article>
+      </section>
+
+      <section class="insights">
+        <div class="section-title"><div><p class="eyebrow">Destaques</p><h2>Indicadores do período</h2></div></div>
+        <div class="insight-grid" id="insightGrid"></div>
+      </section>
+
+      <section class="table-section">
+        <div class="section-title">
+          <div><p class="eyebrow">Movimentações</p><h2>Lançamentos detalhados</h2></div>
+          <span class="record-count" id="recordCount">0 registros</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Data</th><th>Tipo</th><th>Cliente/descrição</th><th>Serviço/categoria</th><th>Pagamento</th><th>Valor</th></tr></thead>
+            <tbody id="summaryTable"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer>Rayssa Studio da Beleza · Resumo financeiro</footer>
+    <script src="js/storage.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/resumo.js"></script>
+  </body>
+</html>
